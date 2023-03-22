@@ -1,4 +1,4 @@
-name: RT model history
+name: SYN memote tracking
 
 on:
   push:
@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Checkout RHODO model
+    - name: Checkout model
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
@@ -30,11 +30,9 @@ jobs:
     - name: Setup variables
       id: setup
       run: |
-
         echo "snapshot=snapshot_report.html" >> $GITHUB_ENV
         echo "history=history_report.html" >> $GITHUB_ENV
         echo "deployment=gh-pages" >> $GITHUB_ENV
-        echo "other-repo=gh-pages-repo" >> $GITHUB_ENV
         echo "custom_tests=syn_elong/custom_tests" >> $GITHUB_ENV
         echo "MEMOTE_LOCATION=sqlite:///results.db" >> $GITHUB_ENV
         echo "PYTHONPATH=$PYTHONPATH:concerto_path" >> $GITHUB_ENV
@@ -42,8 +40,6 @@ jobs:
 
     - name: Memote short run
       run: |
-        ls
-        pwd
         git checkout gh-pages
         git checkout ${{ github.ref_name }}
         memote run --custom-tests=${{ env.custom_tests }}
@@ -53,8 +49,7 @@ jobs:
     - name: Compute Memote history on push
       run: |
         # Generate the history report on the deployment branch
-        memote report history \
-        --filename="${{ env.history }}"
+        memote report history --filename="${{ env.history }}"
 
     - name: Memote run
       run: |
