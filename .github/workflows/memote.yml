@@ -40,6 +40,7 @@ jobs:
 
     - name: Memote short run
       run: |
+        git config --global user.name "memote-bot"
         git checkout gh-pages
         git checkout ${{ github.ref_name }}
         memote run --custom-tests=${{ env.custom_tests }}
