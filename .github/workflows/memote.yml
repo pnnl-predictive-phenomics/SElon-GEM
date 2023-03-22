@@ -1,0 +1,75 @@
+name: RT model history
+
+on:
+  push:
+    branches: [ "main"]
+jobs:
+  memote-history:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout RHODO model
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Checkout concerto
+      uses: actions/checkout@v2
+      with:
+        repository: PNNL-CompBio/CONCERTO
+        path: 'concerto_path'
+
+    - name: Set up Python 3
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10.6'
+
+    - name: Install memote
+      run: pip install memote cobra
+
+    - name: Setup variables
+      id: setup
+      run: |
+
+        echo "snapshot=snapshot_report.html" >> $GITHUB_ENV
+        echo "history=history_report.html" >> $GITHUB_ENV
+        echo "deployment=gh-pages" >> $GITHUB_ENV
+        echo "other-repo=gh-pages-repo" >> $GITHUB_ENV
+        echo "custom_tests=syn_elong/custom_tests" >> $GITHUB_ENV
+        echo "MEMOTE_LOCATION=sqlite:///results.db" >> $GITHUB_ENV
+        echo "PYTHONPATH=$PYTHONPATH:concerto_path" >> $GITHUB_ENV
+
+
+    - name: Memote short run
+      run: |
+        ls
+        pwd
+        git checkout gh-pages
+        git checkout ${{ github.ref_name }}
+        memote run --custom-tests=${{ env.custom_tests }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Compute Memote history on push
+      run: |
+        # Generate the history report on the deployment branch
+        memote report history \
+        --filename="${{ env.history }}"
+
+    - name: Memote run
+      run: |
+        git checkout ${{ github.ref_name }}
+        memote report snapshot \
+        --filename="${{ env.snapshot }}" \
+        --custom-tests=${{ env.custom_tests }}
+
+    - name: Auto-commit results
+      uses: stefanzweifel/git-auto-commit-action@v4.4.0
+      with:
+        commit_user_name: memote-bot
+        commit_message: "chore: update memote history report"
+        file_pattern: "*_report.html"
+        branch: gh-pages
+        repository: .
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
