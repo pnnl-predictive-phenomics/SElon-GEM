@@ -50,15 +50,16 @@ jobs:
 
     - name: Compute Memote history on push
       run: |
+        git checkout gh-pages
         # Generate the history report on the deployment branch
         memote report history --filename="${{ env.history }}"
 
-    - name: Memote run
-      run: |
-        git checkout ${{ github.ref_name }}
-        memote report snapshot \
-        --filename="${{ env.snapshot }}" \
-        --custom-tests=${{ env.custom_tests }}
+#    - name: Memote run
+#      run: |
+#        git checkout ${{ github.ref_name }}
+#        memote report snapshot \
+#        --filename="${{ env.snapshot }}" \
+#        --custom-tests=${{ env.custom_tests }}
 
     - name: Auto-commit results
       uses: stefanzweifel/git-auto-commit-action@v4.4.0
