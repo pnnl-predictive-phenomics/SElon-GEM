@@ -34,7 +34,7 @@ jobs:
         echo "history=history_report.html" >> $GITHUB_ENV
         echo "deployment=gh-pages" >> $GITHUB_ENV
         echo "custom_tests=syn_elong/custom_tests" >> $GITHUB_ENV
-        echo "MEMOTE_LOCATION=sqlite:///results.db" >> $GITHUB_ENV
+        echo "MEMOTE_LOCATION=results" >> $GITHUB_ENV
         echo "PYTHONPATH=$PYTHONPATH:concerto_path" >> $GITHUB_ENV
 
 
@@ -54,12 +54,12 @@ jobs:
         # Generate the history report on the deployment branch
         memote report history --filename="${{ env.history }}"
 
-#    - name: Memote run
-#      run: |
-#        git checkout ${{ github.ref_name }}
-#        memote report snapshot \
-#        --filename="${{ env.snapshot }}" \
-#        --custom-tests=${{ env.custom_tests }}
+    - name: Memote run
+      run: |
+        git checkout ${{ github.ref_name }}
+        memote report snapshot \
+        --filename="${{ env.snapshot }}" \
+        --custom-tests=${{ env.custom_tests }}
 
     - name: Auto-commit results
       uses: stefanzweifel/git-auto-commit-action@v4.4.0
