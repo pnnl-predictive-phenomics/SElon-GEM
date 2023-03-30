@@ -36,6 +36,8 @@ jobs:
         echo "custom_tests=syn_elong/custom_tests" >> $GITHUB_ENV
         echo "MEMOTE_LOCATION=results" >> $GITHUB_ENV
         echo "PYTHONPATH=$PYTHONPATH:concerto_path" >> $GITHUB_ENV
+        ls
+        pwd
 
 
     - name: Memote short run
