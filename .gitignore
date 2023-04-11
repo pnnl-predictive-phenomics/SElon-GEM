@@ -1,3 +1,8 @@
 /.idea/
 *.pyc
 concerto_path
+
+
+# data not ready for public eye
+syn_elong/data/excreted/source/
+
