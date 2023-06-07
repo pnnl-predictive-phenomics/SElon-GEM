@@ -14,8 +14,7 @@ import cobra
 import os
 import logging
 
-from concerto.utils.biolog_help import add_biolog_exchanges
-
+from concerto.utils.biolog_help import add_biolog_exchanges, universal_model
 
 log = logging.getLogger()
 
@@ -40,10 +39,30 @@ def update_1(model):
     model = add_biolog_exchanges(model)
     return model
 
+def update_2(model):
+    # Add the sucrose transporter SUCRt2 and associated gene
+    log.info("Adding Sucrose Transporter")
 
+    # Copy sucrose transport from universal model
+    sucr_transport = universal_model.reactions.SUCRt2.copy()
+
+    # Set the lower bounds for the sucrose reactions
+    sucr_transport.lower_bound = -1000.0
+    model.reactions.EX_sucr_e.lower_bound = 0.011
+
+    # Add the transport reaction to the model
+    model.add_reactions([sucr_transport])
+
+    # Add the gene name of the sucrose transporter to the model
+    gene_add = cobra.core.Gene(id='cscB',name='cscB',functional=True)
+    model.reactions.SUCRt2.gene_reaction_rule = '( cscB )'
+
+    return model
+    
 def process_model_steps():
     # Fix compartments
     model = update_1(starting_model)
+    model = update_2(model)
     write_model(model)
 
 
