@@ -51,7 +51,7 @@ def update_2(model):
     model.reactions.EX_sucr_e.lower_bound = 0.011
 
     # Add the transport reaction to the model
-    model.add_reaction(sucr_transport)
+    model.add_reactions([sucr_transport])
 
     # Add the gene name of the sucrose transporter to the model
     gene_add = cobra.core.Gene(id='cscB',name='cscB',functional=True)
