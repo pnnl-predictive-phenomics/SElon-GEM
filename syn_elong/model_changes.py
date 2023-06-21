@@ -39,6 +39,7 @@ def update_1(model):
     model = add_biolog_exchanges(model)
     return model
 
+
 def update_2(model):
     # Add the sucrose transporter SUCRt2 and associated gene
     log.info("Adding Sucrose Transporter")
@@ -54,15 +55,36 @@ def update_2(model):
     model.add_reactions([sucr_transport])
 
     # Add the gene name of the sucrose transporter to the model
-    gene_add = cobra.core.Gene(id='cscB',name='cscB',functional=True)
+    gene_add = cobra.core.Gene(id='cscB', name='cscB', functional=True)
     model.reactions.SUCRt2.gene_reaction_rule = '( cscB )'
 
     return model
-    
+
+
+def update_3(model):
+    # adds reactions from iMS837
+    updated_model = model.copy()
+    new_model = cobra.io.load_json_model('iMS837.json')
+    rxns_to_add = []
+    rxns_to_remove = []
+    for i in new_model.reactions:
+        if i not in model.reactions:
+            rxns_to_add.append(i)
+
+    for i in model.reactions:
+        if i not in new_model.reactions:
+            rxns_to_remove.append(i)
+
+    updated_model.add_reactions(set(rxns_to_add))
+    updated_model.remove_reactions(set(rxns_to_remove), remove_orphans=True)
+    return updated_model
+
+
 def process_model_steps():
     # Fix compartments
     model = update_1(starting_model)
     model = update_2(model)
+    model = update_3(model)
     write_model(model)
 
 
