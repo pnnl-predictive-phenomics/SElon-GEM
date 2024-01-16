@@ -58,6 +58,9 @@ def update_2(model):
 
     model.reactions.SUCRt2.gene_reaction_rule = '( cscB )'
 
+    # upper bound of biomass shoul dnot be limited
+    model.reactions.BIOMASS__1.upper_bound = 1000
+
     return model
 
 
