@@ -12,7 +12,7 @@ import cobra
 
 import pandas as pd
 pd.set_option('display.float_format', lambda x: f'{x:.3f}')
-from syn_elong.strain_design_simplified import compute_strain_designs, StrainDesign
+from syn_elong.strain_design_simplified import  StrainDesign
 from syn_elong import model
 from syn_elong.media import m9_media
 
@@ -69,7 +69,7 @@ with consistent_model as m:
         # gene_kos=True,
     )
 
-    sols = sd_helper.run(max_solutions=10, max_cost=5, time_limit=3000, solution_approach=sd.names.ANY)
+    sols = sd_helper.run(max_solutions=10, max_cost=5, time_limit=30000, solution_approach=sd.names.ANY)
 
 
 print("Completed run")
