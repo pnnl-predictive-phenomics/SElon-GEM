@@ -2,7 +2,7 @@ name: SYN memote tracking
 
 on:
   push:
-    branches: [ "main"]
+    branches: [ "main", "add_missing_rxns"]
 jobs:
   memote-history:
     runs-on: ubuntu-latest
@@ -25,7 +25,7 @@ jobs:
         python-version: '3.10.6'
 
     - name: Install memote
-      run: pip install memote cobra
+      run: pip install memote cobra pytest~=7.0
 
     - name: Setup variables
       id: setup
@@ -36,9 +36,6 @@ jobs:
         echo "custom_tests=syn_elong/custom_tests" >> $GITHUB_ENV
         echo "MEMOTE_LOCATION=results" >> $GITHUB_ENV
         echo "PYTHONPATH=$PYTHONPATH:concerto_path" >> $GITHUB_ENV
-        ls
-        pwd
-
 
     - name: Memote short run
       run: |
@@ -55,13 +52,25 @@ jobs:
         git checkout gh-pages
         # Generate the history report on the deployment branch
         memote report history --filename="${{ env.history }}"
-
+    - name: Auto-commit results
+      uses: stefanzweifel/git-auto-commit-action@v4.4.0
+      with:
+        commit_user_name: memote-bot
+        commit_message: "chore: update memote history report"
+        file_pattern: "*_report.html"
+        branch: gh-pages
+        repository: .
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Memote run
       run: |
         git checkout ${{ github.ref_name }}
         memote report snapshot \
         --filename="${{ env.snapshot }}" \
         --custom-tests=${{ env.custom_tests }}
+        mv ${{ env.snapshot }} tmp.html
+        git checkout gh-pages
+        mv tmp.html ${{ env.snapshot }} 
 
     - name: Auto-commit results
       uses: stefanzweifel/git-auto-commit-action@v4.4.0
