@@ -5,15 +5,11 @@ medium:
     model_min_media:
       filename: "syn_min_media.csv"
       label: "Minimal"
-    no_carbon:
-      filename: "min_media_all_wavelength.csv"
-      label: "No Carbon"
 essentiality:
   path: "essentiality/"
   experiments:
     knockouts:
-      medium:      no_carbon
+      medium:  model_min_media
       filename: "syn_elo_knockdown.csv"
       label: "knock-out library"
-
-#minimal_growth_rate: 0.05
+minimal_growth_rate: 0.05
