@@ -14,7 +14,7 @@ import cobra
 import os
 import logging
 from cobra import Reaction, Metabolite
-from concerto.utils.biolog_help import add_biolog_exchanges, universal_model
+from concerto.utils.biolog_help import add_biolog_exchanges, load_universal_model
 from syn_elong.updates_from_ims837 import update_5
 log = logging.getLogger()
 
@@ -29,6 +29,8 @@ starting_model.id = "syn_elong"
 
 output_model_name = 'syn_elong.xml'
 output_model_path = os.path.join(_file_path, output_model_name)
+
+universal_model = load_universal_model()
 
 
 def write_model(model):
@@ -77,7 +79,6 @@ def update_3(model):
 
 
     return model
-
 
 
 def update_4(model):
